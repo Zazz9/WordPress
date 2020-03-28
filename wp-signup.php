@@ -1,11 +1,11 @@
 <?php
 
 /** Sets up the WordPress Environment. */
-require __DIR__ . '/wp-load.php';
+require( dirname( __FILE__ ) . '/wp-load.php' );
 
 add_action( 'wp_head', 'wp_no_robots' );
 
-require __DIR__ . '/wp-blog-header.php';
+require( dirname( __FILE__ ) . '/wp-blog-header.php' );
 
 nocache_headers();
 
@@ -39,7 +39,7 @@ if ( ! is_main_site() ) {
 	die();
 }
 
-// Fix for page title.
+// Fix for page title
 $wp_query->is_404 = false;
 
 /**
@@ -68,8 +68,8 @@ function wpmu_signup_stylesheet() {
 		.mu_register #site-language { display: block; }
 		.mu_register .prefix_address,
 			.mu_register .suffix_address { font-size: 18px; display:inline; }
-		.mu_register label { font-weight: 600; font-size: 15px; display: block; margin: 10px 0; }
-		.mu_register label.checkbox { display:inline; }
+		.mu_register label { font-weight: 600; font-size: 15px; display: inline-block; margin: 10px 0; }
+		.mu_register label.checkbox { display:inline-block; }
 		.mu_register .mu_alert { font-weight: 600; padding: 10px; color: #333333; background: #ffffe0; border: 1px solid #e6db55; }
 	</style>
 	<?php
@@ -86,7 +86,7 @@ get_header( 'wp-signup' );
 do_action( 'before_signup_form' );
 ?>
 <div id="signup-content" class="widecolumn">
-<div class="mu_register wp-signup-container" role="main">
+<div class="mu_register wp-signup-container">
 <?php
 /**
  * Generates and displays the Signup and Create Site forms
@@ -139,7 +139,7 @@ function show_blog_form( $blogname = '', $blog_title = '', $errors = '' ) {
 		);
 	}
 
-	// Site Title.
+	// Blog Title
 	?>
 	<label for="blog_title"><?php _e( 'Site Title:' ); ?></label>
 	<?php
@@ -189,7 +189,7 @@ function show_blog_form( $blogname = '', $blog_title = '', $errors = '' ) {
 
 		$blog_public_on_checked  = '';
 		$blog_public_off_checked = '';
-	if ( isset( $_POST['blog_public'] ) && '0' === $_POST['blog_public'] ) {
+	if ( isset( $_POST['blog_public'] ) && '0' == $_POST['blog_public'] ) {
 		$blog_public_off_checked = 'checked="checked"';
 	} else {
 		$blog_public_on_checked = 'checked="checked"';
@@ -198,15 +198,18 @@ function show_blog_form( $blogname = '', $blog_title = '', $errors = '' ) {
 
 	<div id="privacy">
 		<p class="privacy-intro">
-			<?php _e( 'Privacy:' ); ?>
+			<label for="blog_public_on"><?php _e( 'Privacy:' ); ?></label>
 			<?php _e( 'Allow search engines to index this site.' ); ?>
 			<br style="clear:both" />
 			<label class="checkbox" for="blog_public_on">
-				<input type="radio" id="blog_public_on" name="blog_public" value="1" <?php echo $blog_public_on_checked; ?> />
+				<input type="radio" id="blog_public_on" name="blog_public" value="1" style="
+			
+				display: inline-block; width: 80px;" <?php echo $blog_public_on_checked; ?> />
 				<strong><?php _e( 'Yes' ); ?></strong>
 			</label>
 			<label class="checkbox" for="blog_public_off">
-				<input type="radio" id="blog_public_off" name="blog_public" value="0" <?php echo $blog_public_off_checked; ?> />
+				<input type="radio" id="blog_public_off" name="blog_public" value="0" style="
+			display: inline-block; width: 80px;" <?php echo $blog_public_off_checked; ?> />
 				<strong><?php _e( 'No' ); ?></strong>
 			</label>
 		</p>
@@ -253,25 +256,24 @@ function show_user_form( $user_name = '', $user_email = '', $errors = '' ) {
 		$errors = new WP_Error();
 	}
 
-	// Username.
+	// User name
 	echo '<label for="user_name">' . __( 'Username:' ) . '</label>';
 	$errmsg = $errors->get_error_message( 'user_name' );
 	if ( $errmsg ) {
 		echo '<p class="error">' . $errmsg . '</p>';
 	}
-	echo '<input name="user_name" type="text" id="user_name" value="' . esc_attr( $user_name ) . '" autocapitalize="none" autocorrect="off" maxlength="60" /><br />';
-	_e( '(Must be at least 4 characters, letters and numbers only.)' );
-	?>
+	echo '<input name="user_name" type="text" id="user_name" value="' . esc_attr( $user_name ) . '" autocapitalize="none" autocorrect="off" maxlength="60" />'; _e( '(Must be at least 4 characters, letters and numbers only.)' ); ?>
 
-	<label for="user_email"><?php _e( 'Email&nbsp;Address:' ); ?></label>
+	<br></br><label for="user_email"><?php _e( 'Email&nbsp;Address:' ); ?></label>
+	
 	<?php
 	$errmsg = $errors->get_error_message( 'user_email' );
 	if ( $errmsg ) {
 		?>
 		<p class="error"><?php echo $errmsg; ?></p>
 	<?php } ?>
-	<input name="user_email" type="email" id="user_email" value="<?php echo esc_attr( $user_email ); ?>" maxlength="200" /><br /><?php _e( 'We send your registration email to this address. (Double-check your email address before continuing.)' ); ?>
-	<?php
+	<input name="user_email" type="email" id="user_email" value="<?php echo esc_attr( $user_email ); ?>" maxlength="200" /><?php _e( 'We send your registration email to this address. (Double-check your email address before continuing.)' ); ?>
+	<br></br><?php
 	$errmsg = $errors->get_error_message( 'generic' );
 	if ( $errmsg ) {
 		echo '<p class="error">' . $errmsg . '</p>';
@@ -457,7 +459,7 @@ function validate_another_blog_signup() {
 	 *
 	 * @param array $blog_meta_defaults An array of default blog meta variables.
 	 */
-	$meta_defaults = apply_filters_deprecated( 'signup_create_blog_meta', array( $blog_meta_defaults ), '3.0.0', 'add_signup_meta' );
+	$meta_defaults = apply_filters( 'signup_create_blog_meta', $blog_meta_defaults );
 
 	/**
 	 * Filters the new default site meta variables.
@@ -610,11 +612,16 @@ function signup_user( $user_name = '', $user_email = '', $errors = '' ) {
 		<?php } elseif ( 'user' === $active_signup ) { ?>
 			<input id="signupblog" type="hidden" name="signup_for" value="user" />
 		<?php } else { ?>
-			<input id="signupblog" type="radio" name="signup_for" value="blog" <?php checked( $signup_for, 'blog' ); ?> />
-			<label class="checkbox" for="signupblog"><?php _e( 'Gimme a site!' ); ?></label>
+			<input id="signupblog" type="radio" name="signup_for" value="blog" style="
+	width: 45px;
+	display: inline-block;" <?php checked( $signup_for, 'blog' ); ?> />
+			<label class="checkbox" for="signupblog"
+			><?php _e( 'I want a site!' ); ?></label>
 			<br />
-			<input id="signupuser" type="radio" name="signup_for" value="user" <?php checked( $signup_for, 'user' ); ?> />
-			<label class="checkbox" for="signupuser"><?php _e( 'Just a username, please.' ); ?></label>
+			<input id="signupuser" type="radio" name="signup_for" value="user" style="
+	width: 45px;
+	display: inline-block;" <?php checked( $signup_for, 'user' ); ?> />
+			<label class="checkbox" for="signupuser"><?php _e( 'As a user.' ); ?></label>
 		<?php } ?>
 		</p>
 
@@ -641,7 +648,7 @@ function validate_user_signup() {
 		return false;
 	}
 
-	if ( 'blog' === $_POST['signup_for'] ) {
+	if ( 'blog' == $_POST['signup_for'] ) {
 		signup_blog( $user_name, $user_email );
 		return false;
 	}
@@ -887,7 +894,7 @@ function signup_get_available_languages() {
 	return array_intersect_assoc( $languages, get_available_languages() );
 }
 
-// Main.
+// Main
 $active_signup = get_site_option( 'registration', 'none' );
 
 /**
